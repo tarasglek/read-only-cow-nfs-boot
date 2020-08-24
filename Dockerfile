@@ -19,4 +19,5 @@ RUN sed -i 's/ALL$/NOPASSWD:ALL/' /etc/sudoers && \
  echo "\n[keyfile]\nunmanaged-devices=*,except:type:ethernet\n" >> /etc/NetworkManager/NetworkManager.conf && \
   useradd -m hello -s /bin/bash -G sudo && \
   echo "hello:world" | chpasswd
+ENV NFS_BOOT_ARGS netboot=nfs nfsroot=192.168.1.226:/nfs/
 COPY ./build-disk.sh isolinux.cfg ./
