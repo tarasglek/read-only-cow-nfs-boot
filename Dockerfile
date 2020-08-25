@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \
   linux-image-$KERNEL squashfs-tools zip xz-utils systemd-sysv ca-certificates \
   vim-nox cpio sudo iproute2  network-manager netplan pciutils live-boot \
-  live-boot-initramfs-tools syslinux-common isolinux genisoimage
+  live-boot-initramfs-tools syslinux-common isolinux genisoimage openssh-server
 WORKDIR /root
 RUN sed -i 's/ALL$/NOPASSWD:ALL/' /etc/sudoers && \
  echo "[Network]\nDHCP=yes" >> /etc/systemd/network/00-dhcp.network && \
