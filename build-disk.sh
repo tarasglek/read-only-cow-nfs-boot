@@ -32,3 +32,5 @@ mv /tmp/boot.iso /tmp/network-root.iso
 #cleanup
 mv $ISOLINUX/initrd $ISOLINUX/vmlinuz /tmp
 rm -fr /tmp/iso /tmp/empty
+
+chown -R $USER_GROUP /tmp/

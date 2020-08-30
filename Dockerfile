@@ -3,10 +3,20 @@
 # kvm -cdrom bin/ipxe.iso   -m 4096 -net nic -net user -serial stdio  -nographic -monitor null
 # https://wiki.debian.org/InitramfsDebug
 FROM ubuntu:18.04
+ARG KERNEL
+ENV KERNEL $KERNEL
+RUN apt-get update && apt install -y linux-headers-$KERNEL r8168-dkms
+RUN cp /lib/modules/$KERNEL/updates/dkms/r8168.ko /
+
+FROM ubuntu:18.04
+ARG KERNEL
+ENV KERNEL $KERNEL
 RUN echo deb http://us.archive.ubuntu.com/ubuntu bionic-backports main restricted universe multiverse >> /etc/apt/sources.list
 ARG DEBIAN_FRONTEND=noninteractive
-ENV KERNEL 5.4.0-37-generic
-RUN mkdir -p /etc/initramfs-tools/ /var/run
+RUN mkdir -p /etc/initramfs-tools/ /var/run /etc/modprobe.d/ `dirname $RTLNIC_KO`
+ENV RTLNIC_KO=/lib/modules/$KERNEL/updates/dkms/r8168.ko
+RUN echo blacklist zfs > /etc/modprobe.d/blacklist-zfs.conf
+COPY --from=0 /r8168.ko $RTLNIC_KO
 COPY initramfs.conf /etc/initramfs-tools/
 RUN apt-get update && apt-get install --no-install-recommends -y \
   -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \
@@ -20,4 +30,5 @@ RUN sed -i 's/ALL$/NOPASSWD:ALL/' /etc/sudoers && \
   useradd -m hello -s /bin/bash -G sudo && \
   echo "hello:world" | chpasswd
 ENV NFS_BOOT_ARGS netboot=nfs nfsroot=192.168.1.226:/nfs/
+ENV USER_GROUP nobody:nobody
 COPY ./build-disk.sh isolinux.cfg ./
