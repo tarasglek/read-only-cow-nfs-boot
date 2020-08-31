@@ -30,5 +30,6 @@ RUN sed -i 's/ALL$/NOPASSWD:ALL/' /etc/sudoers && \
   useradd -m hello -s /bin/bash -G sudo && \
   echo "hello:world" | chpasswd
 ENV NFS_BOOT_ARGS netboot=nfs nfsroot=192.168.1.226:/nfs/
-ENV USER_GROUP nobody:nobody
+ARG USER_GROUP 
+ENV USER_GROUP=$USER_GROUP
 COPY ./build-disk.sh isolinux.cfg ./
